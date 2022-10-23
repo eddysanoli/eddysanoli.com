@@ -15,7 +15,7 @@
         upgrade: yes
 
     # ---------------------------------------------- #
-    - name: Install Git and Docker
+    - name: Install Git
       apt:
         name:
           - git
@@ -23,7 +23,7 @@
 
     # ---------------------------------------------- #
     # Installing Docker consists of a multi-step process. Check here for more info:
-    # https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-18-04
+    # https://www.ansiblepilot.com/articles/install-docker-in-debian-like-systems-ansible-module-apt_key-apt_repository-and-apt/
 
     - name: Install Docker Dependencies
       apt:
