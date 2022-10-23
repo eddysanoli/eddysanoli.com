@@ -2,7 +2,7 @@
 - hosts: "*"
 
   # Name of the playbook
-  name: provision-infinito27
+  name: provision-eddysanoli
 
   # Make it so that Ansible can "escalate" to root
   # (i.e. run commands using sudo)
@@ -15,93 +15,43 @@
         upgrade: yes
 
     # ---------------------------------------------- #
-    - name: Install Git, Snapd (for Certbot), Nginx
+    - name: Install Git and Docker
       apt:
         name:
           - git
-          - nginx
-          - snapd
         state: latest
 
     # ---------------------------------------------- #
-    # Note: This is required because just doing "apt-get install nodejs" installs
-    # a really old version of Node. Here we install Node 16. The current version at
-    # the time of writing this.
-    - name: Install the GPG Key for Node LTS
-      apt_key:
-        url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
-        state: present
+    # Installing Docker consists of a multi-step process. Check here for more info:
+    # https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-18-04
 
-    - name: Add Latest NodeJS Source
-      apt_repository:
-        repo: deb https://deb.nodesource.com/node_16.x bionic main
-        update_cache: yes
-        state: present
-
-    - name: Install NodeJS
+    - name: Install Docker Dependencies
       apt:
-        name: nodejs
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - lsb-release
+          - gnupg
+        state: latest
+        update_cache: yes
+
+    - name: Add Docker GPG Key
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
         state: present
 
-    # ---------------------------------------------- #
-    - name: Install Certbot using Snapd
-      shell: snap install --classic certbot
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
+        state: present
+        filename: docker
 
-    - name: Create a Symbolic Link for Snapd's Certbot
-      file:
-        src: /snap/bin/certbot
-        dest: /usr/bin/certbot
-        state: link
-
-    # ---------------------------------------------- #
-    - name: Delete Default Nginx Config from the Sites Enabled
-      file:
-        path: /etc/nginx/sites-enabled/default
-        state: absent
-
-    # ---------------------------------------------- #
-    - name: Copy Nginx Config for Infinito27.com
-      copy:
-        src: /opt/ansible/storage/nginx/infinito27.com
-        dest: /etc/nginx/sites-available/infinito27.com
-
-    # ---------------------------------------------- #
-    # Analog: ln -s /source /destination
-    - name: Create Symbolic Link for Infinito27.com
-      file:
-        src: /etc/nginx/sites-available/infinito27.com
-        dest: /etc/nginx/sites-enabled/infinito27.com
-        state: link
-
-    # ---------------------------------------------- #
-    - name: Reload Nginx Configuration
-      shell: "nginx -s reload"
-
-    # ---------------------------------------------- #
-    # Explanation of Parameters
-    # - --nginx: Use the Nginx plugin
-    # - --non-interactive: Don't ask for confirmations or input from the user
-    # - --agree-tos: Agree to the Terms of Service automatically
-    # - --expand: If a certificate already exists, expand it to include the new domains or changes
-    # - -m email@email.com: Email address used to notify the user about certificate expiration
-    # - -d domain: Add a certificate to the given domain. Can be used multiple times
-    - name: Start Certbot for Nginx (Add SSL Certificate to Site)
-      shell: "certbot --nginx --non-interactive --agree-tos --expand -m eddysanoli@gmail.com -d infinito27.com -d www.infinito27.com"
-
-    # ---------------------------------------------- #
-    - name: Delete the Files for the Site
-      file:
-        path: /var/www/infinito27
-        state: absent
-
-    - name: Re-create the Directory for the Site's Files
-      file:
-        path: /var/www/infinito27
-        state: directory
-
-    # ---------------------------------------------- #
-    # Note: Use the HTTPS URL for the Git Repo in order to avoid the use of SSH Keys
-    - name: Clone the "Infinito27.com" Repository
-      git:
-        repo: https://github.com/eddysanoli/infinito27.com.git
-        dest: /var/www/infinito27
+    - name: Install Docker
+      apt:
+        name:
+          - docker
+          - docker.io
+          - docker-compose
+          - docker-registry
+        update_cache: true
+        state: latest
