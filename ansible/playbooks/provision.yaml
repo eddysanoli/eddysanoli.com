@@ -55,3 +55,21 @@
           - docker-registry
         update_cache: true
         state: latest
+
+    # -------------------------------------------- #
+    - name: Copy Files for Docker Compose Deployment
+      copy:
+        src: "/opt/ansible/storage/"
+        dest: "/opt/storage/"
+        directory_mode: yes
+
+    - name: Take Down the Previous Docker Compose Stack and Volumes
+      docker_compose:
+        project_src: /opt/storage/docker
+        remove_volumes: yes
+        state: absent
+
+    - name: Start Docker Compose Stack
+      docker_compose:
+        project_src: /opt/storage/docker
+        state: present

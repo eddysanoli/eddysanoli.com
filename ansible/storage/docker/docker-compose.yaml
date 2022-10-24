@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+    
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: always                                                           # Always restart unless stopped manually
+    ports:
+      - "80:80"
+    volumes:
+      - /opt/storage/nginx/nginx.conf:/etc/nginx/nginx.conf           # Mount the nginx.conf file
+      - /opt/storage/nginx/html:/var/www/eddysanoli.com/html          # Mount the html folder
+

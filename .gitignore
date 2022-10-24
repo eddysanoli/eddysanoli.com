@@ -40,3 +40,4 @@ terraform/.terraform.lock.hcl
 ansible/configuration/hosts
 terraform/terraform.tfstate
 website/eddysanoli.com/node_modules
+website/eddysanoli.com/.next
