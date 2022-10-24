@@ -57,6 +57,13 @@
         state: latest
 
     # -------------------------------------------- #
+    # Note: Use the HTTPS URL for the Git Repo in order to avoid the use of SSH Keys
+    - name: Clone the "Eddysanoli.com" Repo
+      git:
+        repo: https://github.com/eddysanoli/eddysanoli.com.git
+        dest: /opt/eddysanoli_repo
+
+    # -------------------------------------------- #
     - name: Copy Files for Docker Compose Deployment
       copy:
         src: "/opt/ansible/storage/"

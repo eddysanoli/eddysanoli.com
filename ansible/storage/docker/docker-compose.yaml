@@ -48,6 +48,14 @@ services:
       - LETSENCRYPT_HOST=eddysanoli.com,www.eddysanoli.com            # The letsencrypt container will generate SSL certificates for these domains
       - LETSENCRYPT_EMAIL=work@eddysanoli.com                         # The email that gets notified when the certificates are expiring soon.
     
+  # Container running the Next.js application
+  eddysanoli_com:
+    image: eddysanoli_com:latest
+    build: /opt/eddysanoli_repo/website
+    ports:
+      - "3000:3000"                                                   # Port used by default by Next.js 
+    volumes:
+      - /opt/eddysanoli_repo/website:/usr/src                         # Mount the website folder to the folder where the container will be running the app
 
 # Global volumes shared by all containers
 volumes:
