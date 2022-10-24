@@ -5,7 +5,7 @@ RUN mkdir -p /usr/src
 WORKDIR /usr/src
 
 # Copy source files
-COPY . /usr/src
+COPY /opt/eddysanoli_repo/website /usr/src
 
 # Install dependencies
 RUN npm install
@@ -15,4 +15,4 @@ EXPOSE 3000
 
 # Start app
 RUN npm run build
-CMD npm run start
+ENTRYPOINT [ "npm", "run", "start" ]

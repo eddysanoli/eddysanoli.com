@@ -52,6 +52,7 @@ services:
   eddysanoli_com:
     image: eddysanoli_com:latest
     build: /opt/eddysanoli_repo/website
+    container_name: eddysanoli_com
     ports:
       - "3000:3000"                                                   # Port used by default by Next.js 
     volumes:
