@@ -1,14 +1,30 @@
 version: "3"
 
 services:
+
+  # Redirects requests to the container that has a matching "VIRTUAL_HOST"
+  # environment variable (eg. If a reqeust is made to "example.com", the 
+  # proxy will redirect to the container that has "VIRTUAL_HOST=example.com").
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro                      # To connect to the Docker daemon and automatically change the internal "nginx.conf" file with the address of the containers with a "VIRTUAL_HOST" environment variable.
     
+  # Main nginx container managing the "serving" of the website.
   nginx:
     image: nginx
     container_name: nginx
-    restart: always                                                           # Always restart unless stopped manually
-    ports:
-      - "80:80"
+    restart: always                                                   # Always restart unless stopped manually
+    expose:
+      - "80"                                                          # The nginx proxy will be the one that exposes port 80. This will only expose it locally to the docker network 
     volumes:
       - /opt/storage/nginx/nginx.conf:/etc/nginx/nginx.conf           # Mount the nginx.conf file
       - /opt/storage/nginx/html:/var/www/eddysanoli.com/html          # Mount the html folder
+    environment:
+      - VIRTUAL_HOST=eddysanoli.com,www.eddysanoli.com                # The nginx-proxy will redirect "eddysanoli.com" requests to this container 
 
