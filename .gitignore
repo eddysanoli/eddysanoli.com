@@ -43,3 +43,4 @@ website/eddysanoli.com/node_modules
 website/eddysanoli.com/.next
 .vscode
 website/node_modules
+terraform/terraform.tfstate.backup

@@ -9,6 +9,8 @@ services:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
     restart: always
+    networks:
+      - eddysanoli_network
     ports:
       - "80:80"
       - "443:443"
@@ -21,23 +23,27 @@ services:
     labels:
       - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy # To apply the automatic SSL certificates coming from the companion letsencrypt-nginx-proxy-companion container. 
 
-  # Automatic SSL certificate generation using Let's Encrypt
-  letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: letsencrypt
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro                  # To connect to the Docker daemon and automatically change the internal "nginx.conf" file with the address of the containers with a "VIRTUAL_HOST" environment variable.
-      - letsencrypt-vhost:/etc/nginx/vhost.d                          # Mount the same volumes as the nginx-proxy container (equivalent to using "volumes_from") 
-      - letsencrypt-html:/usr/share/nginx/html
-      - letsencrypt-certs:/etc/nginx/certs:rw
-      - letsencrypt-confd:/etc/nginx/conf.d
+  # # Automatic SSL certificate generation using Let's Encrypt
+  # letsencrypt:
+  #   image: jrcs/letsencrypt-nginx-proxy-companion
+  #   container_name: letsencrypt
+  #   restart: always
+  #   networks:
+  #     - eddysanoli_networks
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro                  # To connect to the Docker daemon and automatically change the internal "nginx.conf" file with the address of the containers with a "VIRTUAL_HOST" environment variable.
+  #     - letsencrypt-vhost:/etc/nginx/vhost.d                          # Mount the same volumes as the nginx-proxy container (equivalent to using "volumes_from") 
+  #     - letsencrypt-html:/usr/share/nginx/html
+  #     - letsencrypt-certs:/etc/nginx/certs:rw
+  #     - letsencrypt-confd:/etc/nginx/conf.d
     
   # Main nginx container managing the "serving" part of the website.
   nginx:
     image: nginx
     container_name: nginx
     restart: always                                                   # Always restart unless stopped manually
+    networks:
+      - eddysanoli_network
     expose:
       - "80"                                                          # The nginx proxy will be the one that exposes port 80. This will only expose it locally to the docker network 
     volumes:
@@ -53,10 +59,19 @@ services:
     image: eddysanoli_com:latest
     build: /opt/eddysanoli_repo/website
     container_name: eddysanoli_com
+    networks:
+      - eddysanoli_network
     ports:
       - "3000:3000"                                                   # Port used by default by Next.js 
     volumes:
       - /opt/eddysanoli_repo/website:/usr/src                         # Mount the website folder to the folder where the container will be running the app
+      - /usr/src/node_modules/                                        # Prevent the node_modules from being overwritten by the previous mount
+      - /usr/src/.next/                                               # Prevent the .next folder (files from build) from being overwritten by the previous mount
+  
+# Global networks
+networks:
+  eddysanoli_network:
+    driver: bridge
 
 # Global volumes shared by all containers
 volumes:

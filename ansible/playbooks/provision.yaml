@@ -58,10 +58,12 @@
 
     # -------------------------------------------- #
     # Note: Use the HTTPS URL for the Git Repo in order to avoid the use of SSH Keys
+    # Also use the "force" option to discard any local changes to the repo.
     - name: Clone the "Eddysanoli.com" Repo
       git:
         repo: https://github.com/eddysanoli/eddysanoli.com.git
         dest: /opt/eddysanoli_repo
+        force: yes
 
     # -------------------------------------------- #
     - name: Copy Files for Docker Compose Deployment
