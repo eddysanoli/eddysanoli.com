@@ -5,7 +5,7 @@ RUN mkdir -p /usr/src
 WORKDIR /usr/src
 
 # Copy source files
-COPY . /usr/src
+COPY /opt/eddysanoli_com/website /usr/src
 
 # Install dependencies
 RUN npm install
