@@ -1,0 +1,14 @@
+
+version: '3'
+services:
+
+  eddysanoli_com:
+    image: eddysanoli_com:latest
+    build: . 
+    container_name: eddysanoli_com
+    ports:
+      - "3000:3000"                         # Port used by default by Next.js 
+    volumes:
+      - ./:/usr/src                         # Mount the website folder to the folder where the container will be running the app
+      - /usr/src/node_modules/              # Prevent the node_modules from being overwritten by the previous mount
+      - /usr/src/.next/                     # Prevent the .next folder (files from build) from being overwritten by the previous mount
