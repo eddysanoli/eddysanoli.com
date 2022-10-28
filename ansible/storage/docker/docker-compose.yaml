@@ -15,15 +15,15 @@ services:
       - nginx
     ports:
       - "80:80"
-      - "443:443"
+      # - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro                      # To connect to the Docker daemon and automatically change the internal "nginx.conf" file with the address of the containers with a "VIRTUAL_HOST" environment variable.
-      - letsencrypt-vhost:/etc/nginx/vhost.d                          # To change the configuration of virtual hosts. 
-      - letsencrypt-html:/usr/share/nginx/html                        # To write challange files (Small validation files found inside of html).   
-      - letsencrypt-certs:/etc/nginx/certs:ro                         # To create / renew LetsEncrypt certificates 
-      - letsencrypt-confd:/etc/nginx/conf.d                           # To change the configuration of the proxy.
-    labels:
-      - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy # To apply the automatic SSL certificates coming from the companion letsencrypt-nginx-proxy-companion container. 
+    #   - letsencrypt-vhost:/etc/nginx/vhost.d                          # To change the configuration of virtual hosts. 
+    #   - letsencrypt-html:/usr/share/nginx/html                        # To write challange files (Small validation files found inside of html).   
+    #   - letsencrypt-certs:/etc/nginx/certs:ro                         # To create / renew LetsEncrypt certificates 
+    #   - letsencrypt-confd:/etc/nginx/conf.d                           # To change the configuration of the proxy.
+    # labels:
+    #   - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy # To apply the automatic SSL certificates coming from the companion letsencrypt-nginx-proxy-companion container. 
 
   # # Automatic SSL certificate generation using Let's Encrypt
   # letsencrypt:
@@ -47,7 +47,7 @@ services:
     networks:
       - eddysanoli_network
     depends_on:
-      - eddysanoli_com
+      - eddysanoli_com                                                # Make sure its dependencies start before it starts in order to  
     expose:
       - "80"                                                          # The nginx proxy will be the one that exposes port 80. This will only expose it locally to the docker network 
     volumes:
