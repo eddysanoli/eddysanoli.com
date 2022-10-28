@@ -5,7 +5,7 @@ RUN mkdir -p /usr/src
 WORKDIR /usr/src
 
 # Copy source files
-COPY /opt/eddysanoli_com/website /usr/src
+COPY . . 
 
 # Install dependencies
 RUN npm install
@@ -14,4 +14,5 @@ RUN npm install
 EXPOSE 3000
 
 # Build and start app
-ENTRYPOINT [ "npm", "run", "build", "&&", "npm", "run", "start" ]
+RUN npm run build
+ENTRYPOINT [ "npm", "run", "start" ]
