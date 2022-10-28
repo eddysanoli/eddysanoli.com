@@ -11,6 +11,8 @@ services:
     restart: always
     networks:
       - eddysanoli_network
+    depends_on:
+      - nginx
     ports:
       - "80:80"
       - "443:443"
@@ -44,6 +46,8 @@ services:
     restart: always                                                   # Always restart unless stopped manually
     networks:
       - eddysanoli_network
+    depends_on:
+      - eddysanoli_com
     expose:
       - "80"                                                          # The nginx proxy will be the one that exposes port 80. This will only expose it locally to the docker network 
     volumes:
