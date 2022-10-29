@@ -1,0 +1,36 @@
+name: Eddysanoli CI
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Test the Website Files
+    runs-on: ubuntu-latest
+    steps:
+
+      # ---------------------------------------------- #
+      - name: Checkout the Latest Commit in Master
+        uses: actions/checkout@v3
+      
+      # ---------------------------------------------- #
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      
+      # ---------------------------------------------- #
+      - name: Install NPM Dependencies
+        working-directory: ./website
+        run: npm install
+      
+      # ---------------------------------------------- #
+      - name: Test the Website
+        working-directory: ./website
+        run: npm run test
+      
+      # ---------------------------------------------- #
+      - name: Try to Build the Website
+        working-directory: ./website
+        run: npm run build

@@ -1,4 +1,4 @@
-name: Eddysanoli Deployment 
+name: Eddysanoli CD 
 
 on: 
   push:
