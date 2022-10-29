@@ -25,6 +25,7 @@ services:
     labels:
       - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy # To apply the automatic SSL certificates coming from the companion letsencrypt-nginx-proxy-companion container. 
 
+
   # Automatic SSL certificate generation using Let's Encrypt
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
@@ -39,24 +40,26 @@ services:
       - letsencrypt-certs:/etc/nginx/certs:rw
       - letsencrypt-confd:/etc/nginx/conf.d
     
+
   # Main nginx container managing the "serving" part of the website.
   nginx:
     image: nginx
     container_name: nginx
-    restart: always                                                   # Always restart unless stopped manually
+    restart: always                                                         # Always restart unless stopped manually
     networks:
       - eddysanoli_network
     depends_on:
-      - eddysanoli_com                                                # Make sure its dependencies start before it starts in order to  
+      - eddysanoli_com                                                      # Make sure its dependencies start before it starts in order to  
     expose:
-      - "80"                                                          # The nginx proxy will be the one that exposes port 80. This will only expose it locally to the docker network 
+      - "80"                                                                # The nginx proxy will be the one that exposes port 80. This will only expose it locally to the docker network 
     volumes:
-      - /opt/storage/nginx/nginx.conf:/etc/nginx/nginx.conf           # Mount the nginx.conf file
+      - /opt/storage/nginx/nginx.conf:/etc/nginx/nginx.conf                 # Mount the nginx.conf file
     environment:
-      - VIRTUAL_HOST=eddysanoli.com,www.eddysanoli.com                # The nginx-proxy will redirect "eddysanoli.com" requests to this container 
-      - LETSENCRYPT_HOST=eddysanoli.com,www.eddysanoli.com            # The letsencrypt container will generate SSL certificates for these domains
-      - LETSENCRYPT_EMAIL=work@eddysanoli.com                         # The email that gets notified when the certificates are expiring soon.
+      - VIRTUAL_HOST=eddysanoli.com,www.eddysanoli.com,bot.eddysanoli.com   # The nginx-proxy will redirect "eddysanoli.com" requests to this container 
+      - LETSENCRYPT_HOST=eddysanoli.com,www.eddysanoli.com                  # The letsencrypt container will generate SSL certificates for these domains
+      - LETSENCRYPT_EMAIL=work@eddysanoli.com                               # The email that gets notified when the certificates are expiring soon.
     
+
   # Container running the Next.js application
   eddysanoli_com:
     image: eddysanoli_com:latest
@@ -68,6 +71,42 @@ services:
       - "3000:3000"                                                   # Port used by default by Next.js 
     volumes:
       - /opt/eddysanoli_repo/website:/usr/src                         # Mount the website folder to the folder where the container will be running the app
+  
+
+  # Logs datasource for Grafana 
+  loki:
+    image: grafana/loki:2.6.1
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - eddysanoli_network
+
+
+  # Scrapes local log files and sends them to loki
+  promtail:
+    image: grafana/promtail:2.6.1
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - eddysanoli_network
+
+
+  # Dashboard for monitoring
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    user: "0"                                             # Run as root 
+    ports:
+      - "3200:3000"
+    networks:
+      - eddysanoli_network
+    environment:
+      - "GF_SECURITY_ADMIN_USER=${GRAFANA_USER}"          # Username for logging into Grafana
+      - "GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASS}"      # Password for logging into Grafana
   
 # Global networks
 networks:
