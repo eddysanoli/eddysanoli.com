@@ -22,6 +22,26 @@
         state: latest
 
     # ---------------------------------------------- #
+    - name: Install NVM and Put the Executable in "~/.nvm"
+      shell: >
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+      args:
+        creates: "~/.nvm/nvm.sh"
+
+    - name: Setup .profile (Add NVM to PATH)
+      lineinfile:
+        path: ~/.profile
+        line: source ~/.nvm/nvm.sh
+        create: yes
+
+    - name: Install Node Versions
+      shell: ". /root/.bashrc && nvm install {{item}}"
+      with_items:
+        - "v16.18.0"
+        - "--lts"
+        - "node"
+
+    # ---------------------------------------------- #
     # Installing Docker consists of a multi-step process. Check here for more info:
     # https://www.ansiblepilot.com/articles/install-docker-in-debian-like-systems-ansible-module-apt_key-apt_repository-and-apt/
 

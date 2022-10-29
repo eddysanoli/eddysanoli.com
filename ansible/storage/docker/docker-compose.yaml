@@ -68,8 +68,6 @@ services:
       - "3000:3000"                                                   # Port used by default by Next.js 
     volumes:
       - /opt/eddysanoli_repo/website:/usr/src                         # Mount the website folder to the folder where the container will be running the app
-      - /usr/src/node_modules/                                        # Prevent the node_modules from being overwritten by the previous mount
-      - /usr/src/.next/                                               # Prevent the .next folder (files from build) from being overwritten by the previous mount
   
 # Global networks
 networks:
