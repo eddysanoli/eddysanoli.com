@@ -86,6 +86,13 @@
         force: yes
 
     # -------------------------------------------- #
+    - name: Clone the "Discord Automation Bot" Repo
+      git:
+        repo: https://github.com/eddysanoli/Discord-Automation-Bot.git
+        dest: /opt/discord_bot
+        force: yes
+
+    # -------------------------------------------- #
     - name: Copy Files for Docker Compose Deployment
       copy:
         src: "/opt/ansible/storage/"

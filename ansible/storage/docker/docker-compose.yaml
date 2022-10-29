@@ -60,7 +60,7 @@ services:
       - LETSENCRYPT_EMAIL=work@eddysanoli.com                               # The email that gets notified when the certificates are expiring soon.
     
 
-  # Container running the Next.js application
+  # Container running the Next.js Portfolio Website 
   eddysanoli_com:
     image: eddysanoli_com:latest
     build: /opt/eddysanoli_repo/website
@@ -71,6 +71,16 @@ services:
       - "3000:3000"                                                   # Port used by default by Next.js 
     volumes:
       - /opt/eddysanoli_repo/website:/usr/src                         # Mount the website folder to the folder where the container will be running the app
+    
+
+  # Discord Automation Bot 
+  discord-bot:
+    build: /opt/discord_bot 
+    image: typescript:latest
+    container_name: discord-bot
+    restart: always
+    volumes:
+      - /opt/discord_bot/:/usr/src                                    # Mount the current directory to workdir of the container
   
 
   # Logs datasource for Grafana 
