@@ -81,6 +81,7 @@ services:
     restart: always
     volumes:
       - /opt/discord_bot/:/usr/src                                    # Mount the current directory to workdir of the container
+      - /usr/src/node_modules                                         # Prevent the containers "node_modules" from being deleted when no "node_modules" folder exists in the server 
   
 
   # Logs datasource for Grafana 
