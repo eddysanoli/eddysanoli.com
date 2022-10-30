@@ -79,9 +79,30 @@ services:
     image: discord-bot:latest
     container_name: discord-bot
     restart: always
+    networks:
+      - eddysanoli_network
+    depends_on: 
+      - postgres
     volumes:
       - /opt/discord_bot/:/usr/src                                    # Mount the current directory to workdir of the container
       - /usr/src/node_modules                                         # Prevent the containers "node_modules" from being deleted when no "node_modules" folder exists in the server 
+  
+  # Postgres Database for the Bot and the Website
+  # You can add as many volumes for as many .sql files that you want to 
+  # run on the database on startup.
+  postgres:
+    image: postgres:14.5
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - /opt/discord_bot/database/init_bot.sql:/docker-entrypoint-initdb.d/init_bot.sql
+    networks:
+      - eddysanoli_network 
   
 
   # Logs datasource for Grafana 
